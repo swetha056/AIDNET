@@ -3,24 +3,24 @@ const { width } = Dimensions.get('window');
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
-  navyDeep:    '#0B1F3A',   // primary background  
-  navyMid:     '#122957',   // card surfaces on dark
-  navyLight:   '#1A3A6B',   // hover / subtle borders
-  navyBorder:  '#1E3F78',   // borders on dark surfaces
+  navyDeep:    '#0047AB',   // primary background (Royal Blue)
+  navyMid:     '#0056b3',   
+  navyLight:   '#007AFF',   
+  navyBorder:  '#B0C4DE',   
   white:       '#FFFFFF',
-  offWhite:    '#F4F7FA',   // page background (light)
-  cardWhite:   '#FFFFFF',   // white cards
-  cardBorder:  '#E8EDF4',   // card border on white bg
-  red:         '#0B1F3A',   // Brand color (Now Navy to match logo)
-  redSoft:     '#C0202A',   // Highlight / Danger red (AIDNET Red)
-  redSubtle:   '#FFF0F0',   // red-tinted white bg
-  gold:        '#C9A84C',   // gold highlight
-  goldLight:   '#F5E6B4',   // gold tint surface
-  goldGlow:    '#E8C96A',   // star / glow gold
-  textDark:    '#0B1F3A',   // primary text (navy)
-  textMid:     '#4A6080',   // secondary text
-  textLight:   '#8FA5BE',   // placeholder / disabled
-  green:       '#2EAA6B',   // success
+  offWhite:    '#F4F7FA',   
+  cardWhite:   '#FFFFFF',   
+  cardBorder:  '#E8EDF4',   
+  red:         '#C0202A',   
+  redSoft:     '#C0202A',   
+  redSubtle:   '#FFF0F0',   
+  gold:        '#C9A84C',   
+  goldLight:   '#F5E6B4',   
+  goldGlow:    '#E8C96A',   
+  textDark:    '#0047AB',   
+  textMid:     '#4A6080',   
+  textLight:   '#8FA5BE',   
+  green:       '#2EAA6B',   
   greenSubtle: '#E8F8F0',
 };
 
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 30,
     elevation: 30,
-    shadowColor: '#000',
+    shadowColor: C.navyDeep,
     shadowOpacity: 0.25,
     shadowOffset: { width: 0, height: 12 },
     shadowRadius: 30,
@@ -177,16 +177,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center',
     elevation: 15,
-    backgroundColor: C.white,
-    borderWidth: 4,
+    backgroundColor: C.navyDeep,
+    borderWidth: 6,
     borderColor: C.redSoft,
-    shadowColor: C.redSoft,
+    shadowColor: C.navyDeep,
     shadowOpacity: 0.4,
     shadowRadius: 18,
     shadowOffset: { width: 0, height: 4 },
   },
-  panicInner: { width: 150, height: 150, borderRadius: 75, backgroundColor: C.white, justifyContent: 'center', alignItems: 'center' },
-  panicText: { fontSize: 44, fontWeight: '900', color: C.redSoft, letterSpacing: 2 },
+  panicInner: { width: 151, height: 151, borderRadius: 75.5, backgroundColor: C.navyDeep, justifyContent: 'center', alignItems: 'center' },
+  panicText: { fontSize: 44, fontWeight: '900', color: C.gold, letterSpacing: 2 },
 
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginTop: 28 },
   emergencyItem: { 
@@ -242,8 +242,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center' 
   },
-  silentOverlay: { flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' },
-  silentHint: { color: '#222', fontSize: 14 },
+  silentOverlay: { flex: 1, backgroundColor: C.navyDeep, justifyContent: 'center', alignItems: 'center' },
+  silentHint: { color: C.textLight, fontSize: 14 },
 
   // ── SIDEBAR / DRAWER ──────────────────────────────────────────────────────
   settingsOverlay: { 
@@ -262,7 +262,7 @@ export const styles = StyleSheet.create({
     padding: 25, 
     paddingTop: 60,
     elevation: 30,
-    shadowColor: '#000',
+    shadowColor: C.navyDeep,
     shadowOpacity: 0.15,
     borderRightWidth: 1,
     borderRightColor: C.cardBorder,

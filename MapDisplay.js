@@ -14,12 +14,12 @@ const styles = StyleSheet.create({
   webMapPlaceholder: {
     height: 150,
     width: '100%',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#0B1F3A',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: '#C9A84C',
     marginBottom: 15
   },
   webMapText: {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   webMapSubText: {
-    color: '#666',
+    color: '#F4F7FA',
     fontSize: 10
   }
 });

@@ -6,32 +6,27 @@ import * as Location from 'expo-location';
 import { styles } from '../theme/Styles';
 
 const EXPERT_CATEGORIES = [
-  { name: "Emergency Medicine Physicians (ER Doctors)", req: "NMC/State Medical Council Registration Number" },
-  { name: "Paramedics and Lab Technicians", req: "Indian Paramedical Council ID" },
-  { name: "Emergency Medical Technicians (EMTs)", req: "NSDC Skill Certificate Number" },
-  { name: "Registered Nurses (RN/GNM)", req: "INC/State Nursing Council ID" },
-  { name: "Tactical EMS (TECC) / SWAT Paramedics", req: "Agency Authorization Letter" },
-  { name: "Wilderness Responders", req: "Relevant Certification/License" },
-  { name: "Government Disaster/Rescue Officers", req: "NDRF/SDRF Service Identity Card" },
-  { name: "Community Paramedics", req: "Indian Paramedical Council ID" },
-  { name: "Mobile Trauma/Surgical Teams", req: "NMC/State Medical Council Registration Number" },
-  { name: "Emergency Care Practitioners (ECP)", req: "Relevant Certification/License" },
-  { name: "Search and Rescue (SAR) Techs", req: "NDRF/SDRF Service Identity Card" },
-  { name: "HAZMAT/Chemical Specialists", req: "PESO/Agency Authorization Letter" },
-  { name: "First Aid Responders", req: "IRCS Certificate QR/ID" },
-  { name: "Emergency Management Specialists", req: "IAEM/CEM Credential" }
+  { name: "Emergency Medicine Physicians (ER Doctors)", req: "NMC/State Medical Council Registration Number", desc: "Verifies MBBS/Specialist Doctors (Digital PDF or clear certificate photo)" },
+  { name: "Paramedics and Lab Technicians", req: "Indian Paramedical Council ID", desc: "Verifies Paramedics and Lab Technicians (Scanned laminated card)" },
+  { name: "Emergency Medical Technicians (EMTs)", req: "NSDC Skill Certificate Number", desc: "Verifies EMTs (Skill India portal e-certificate with QR code)" },
+  { name: "Registered Nurses (RN/GNM)", req: "INC/State Nursing Council ID", desc: "Verifies Registered Nurses (Registration book photocopy/license number)" },
+  { name: "Government Disaster/Rescue Officers", req: "NDRF/SDRF Service Identity Card", desc: "Verifies Rescue Officers (High-security Service ID and master roster check)" },
+  { name: "First Aid Responders", req: "IRCS Certificate QR/ID", desc: "Verifies First Aid Responders (Official verification URL and digital cert)" },
+  { name: "Emergency Management Specialists", req: "IAEM/CEM Credential", desc: "Verifies Management Specialists (Digital badge or professional portfolio PDF)" },
+  { name: "HAZMAT/Chemical Specialists", req: "PESO/Agency Authorization Letter", desc: "Verifies HAmat Specialists (Physical letter or safety folder inspection)" },
+  { name: "Volunteer / Medical Care Giver", req: "Community Verification / Cert", desc: "Verifies experienced caregivers (Relevant training or volunteer certs)" }
 ];
 
 const INSTITUTION_CATEGORIES = [
-  { name: "Hospitals, Clinics, and Labs", req: "Ayushman Bharat Health Facility ID (HFR)" },
-  { name: "Quality Standards / Patient Safety", req: "NABH Accreditation Number" },
-  { name: "Clinical Establishments", req: "Clinical Establishment Act Registration" },
-  { name: "Medical Colleges / Teaching", req: "NMC College ID/Code" },
-  { name: "Medical Laboratories", req: "NABL Registration Number" },
-  { name: "Fire Station / Fire Department", req: "State Fire NOC / Dept ID" },
-  { name: "Police Station / Law Enforcement", req: "Precinct Registration ID" },
-  { name: "Safety Compliance", req: "Fire & Pollution NOC IDs" },
-  { name: "Govt Cashless Schemes", req: "PMJAY Empanelment ID" }
+  { name: "Hospitals, Clinics, and Labs", req: "Ayushman Bharat Health Facility ID (HFR)", desc: "Verifies providers registered under Ayushman Bharat Digital Mission (QR scan)" },
+  { name: "Quality Standards / Patient Safety", req: "NABH Accreditation Number", desc: "Verifies hospital safety and quality standards (NABH official list cross-ref)" },
+  { name: "Clinical Establishments", req: "Clinical Establishment Act Registration", desc: "Verifies legal right to operate clinics (Registration cert digital copy)" },
+  { name: "Medical Colleges / Teaching", req: "NMC College ID/Code", desc: "Verifies medical schools and teaching hospitals (NMC recognized list)" },
+  { name: "Medical Laboratories", req: "NABL Registration Number", desc: "Verifies lab accuracy for diagnostics (Logo and unique certificate number)" },
+  { name: "Fire & Safety Compliance", req: "Fire & Pollution NOC IDs", desc: "Verifies compliance with fire and biomedical waste safety audit standards" },
+  { name: "Govt Cashless Schemes", req: "PMJAY Empanelment ID", desc: "Verifies hospitals authorized for government cashless schemes (PMJAY Active List)" },
+  { name: "Fire Station / Fire Department", req: "State Fire NOC / Dept ID", desc: "Local fire service first response monitoring" },
+  { name: "Police Station / Law Enforcement", req: "Precinct Registration ID", desc: "Local law enforcement emergency escalation monitoring" }
 ];
 
 export const LoginView = ({ onLogin }) => {
@@ -350,13 +345,14 @@ export const LoginView = ({ onLogin }) => {
                 <ScrollView>
                   {(signUpRole === 'Expert' ? EXPERT_CATEGORIES : INSTITUTION_CATEGORIES).map(cat => (
                     <TouchableOpacity key={cat.name} style={{ paddingVertical: 15, borderBottomWidth: 1, borderColor: '#EEE' }} onPress={() => { setSelectedSubRole(cat); setShowRolePicker(false); }}>
-                      <Text style={{ fontSize: 13, color: '#333' }}>{cat.name}</Text>
-                      <Text style={{ fontSize: 10, color: '#C9A84C', marginTop: 4 }}>Req: {cat.req}</Text>
+                      <Text style={{ fontSize: 13, color: '#0B1F3A', fontWeight: 'bold' }}>{cat.name}</Text>
+                      <Text style={{ fontSize: 11, color: '#C9A84C', marginTop: 4, fontWeight: '600' }}>REQ: {cat.req}</Text>
+                      <Text style={{ fontSize: 10, color: '#8FA5BE', marginTop: 2 }}>{cat.desc}</Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                <TouchableOpacity onPress={() => setShowRolePicker(false)} style={{ marginTop: 15, padding: 15, backgroundColor: '#EEE', borderRadius: 8, alignItems: 'center' }}>
-                  <Text style={{ fontWeight: 'bold', color: '#555' }}>CANCEL</Text>
+                <TouchableOpacity onPress={() => setShowRolePicker(false)} style={{ marginTop: 15, padding: 15, backgroundColor: '#F4F7FA', borderRadius: 8, alignItems: 'center' }}>
+                  <Text style={{ fontWeight: 'bold', color: '#0B1F3A' }}>CANCEL</Text>
                 </TouchableOpacity>
               </View>
             </View>

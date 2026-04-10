@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ScrollView, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ref, onValue, update } from 'firebase/database';
+import * as Location from 'expo-location';
 import { db } from '../Database';
 import { sortPackets } from '../TriageEngine';
 import { useUser } from '../UserContext';
@@ -38,24 +39,60 @@ export const MedicalExpertView = () => {
     return onValue(ref(db, 'packets'), snap => {
       const data = snap.val() || {};
       const allPackets = Object.values(data);
-      setPackets(sortPackets(allPackets.filter(p => (p.status === 'Pending' && isRelevantAlert(user.specialty, p.emergencyType)) || (p.expertId === user.id && ['Guided', 'Arrived'].includes(p.status)))));
+      const active = allPackets.find(p => p.expertId === user.id && ['Guided', 'Arrived'].includes(p.status));
+      
+      if (active) {
+        setPackets([active]); // Force focus on one case
+      } else {
+        setPackets(sortPackets(allPackets.filter(p => p.status === 'Pending' && isRelevantAlert(user.specialty, p.emergencyType))));
+      }
       setClosedPackets(allPackets.filter(p => p.expertId === user.id && p.status === 'Closed' && typeof p.rating === 'number'));
     });
   }, []);
 
   const averageRating = closedPackets.length > 0 ? (closedPackets.reduce((acc, p) => acc + p.rating, 0) / closedPackets.length).toFixed(1) : 'N/A';
 
-  const claim = (id) => {
-    if (db.isMock) return;
-    update(ref(db, `packets/${id}`), { status: 'Guided', expertId: user.id });
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return 999;
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI/180;
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; // in metres
   };
 
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords);
+      Location.watchPositionAsync({ accuracy: Location.Accuracy.Balanced, distanceInterval: 10 }, (newLoc) => setLocation(newLoc.coords));
+    })();
+  }, []);
+
   const activeCase = packets.find(p => p.expertId === user.id && (p.status === 'Guided' || p.status === 'Arrived'));
+  const distanceToVictim = activeCase ? getDistance(location?.latitude, location?.longitude, activeCase.latitude, activeCase.longitude) : null;
   
   const markArrived = () => {
     if (db.isMock || !activeCase) return;
+    if (distanceToVictim > 50) {
+      return Alert.alert("Distance Error", "You must be within 50 meters of the victim to mark your arrival. Please proceed to the location.");
+    }
     update(ref(db, `packets/${activeCase.id}`), { status: 'Arrived' });
-    Alert.alert("Location Verified", "You have marked your arrival. Wait for the victim to confirm and close the case.");
+    Alert.alert("Location Verified", "You have marked your arrival. The victim has been notified. They must now confirm and close the case.");
+  };
+
+  const claim = (id) => {
+    if (db.isMock) return;
+    update(ref(db, `packets/${id}`), { status: 'Guided', expertId: user.id });
   };
 
   return (
@@ -74,7 +111,7 @@ export const MedicalExpertView = () => {
             <View style={styles.settingsHeader}>
               <Text style={styles.headerText}>{menuView.toUpperCase()}</Text>
               <TouchableOpacity onPress={() => { if(menuView === 'main') setShowMenu(false); else setMenuView('main'); }}>
-                <Ionicons name={menuView === 'main' ? "close" : "arrow-back"} size={26} color="#333" />
+                <Ionicons name={menuView === 'main' ? "close" : "arrow-back"} size={26} color="#0B1F3A" />
               </TouchableOpacity>
             </View>
             <ScrollView contentContainerStyle={styles.settingsContent}>
@@ -83,7 +120,7 @@ export const MedicalExpertView = () => {
               <MenuOption label="Tactical Guidelines" icon="medical-outline" onSelect={() => { setMenuView('guidelines'); setShowMenu(false); }} />
               <MenuOption label="Performance Analytics" icon="stats-chart-outline" onSelect={() => { setMenuView('analytics'); setShowMenu(false); }} />
               <TouchableOpacity onPress={logout} style={styles.logoutBtnSettings}>
-                 <Text style={[styles.actionBtnText, { color: '#FF0000' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
+                 <Text style={[styles.actionBtnText, { color: '#C0202A' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -95,7 +132,7 @@ export const MedicalExpertView = () => {
         <View style={styles.fullScreenOverlay}>
           <View style={styles.fullScreenHeader}>
              <TouchableOpacity onPress={() => setMenuView('main')}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#0B1F3A" />
              </TouchableOpacity>
              <Text style={styles.headerText}>{menuView.toUpperCase()}</Text>
              <View style={{ width: 28 }} />
@@ -177,19 +214,24 @@ export const MedicalExpertView = () => {
                   <Text style={styles.detailLabel}>BLOOD TYPE: {activeCase.medicalProfile?.bloodGroup || 'UNKNOWN'}</Text>
                   <Text style={styles.detailLabel}>ALLERGIES: {Array.isArray(activeCase.medicalProfile?.allergies) ? activeCase.medicalProfile.allergies.join(', ') : 'NONE'}</Text>
                   <Text style={styles.detailLabel}>CONDITIONS: {Array.isArray(activeCase.medicalProfile?.medicalConditions) ? activeCase.medicalProfile.medicalConditions.join(', ') : 'NONE'}</Text>
-                  <Text style={styles.detailLabel}>EMERGENCY CONTACT: {activeCase.medicalProfile?.guardianPhone}</Text>
+                   <Text style={[styles.detailLabel, {marginTop: 4}]}>1. GUARDIAN: {activeCase.medicalProfile?.guardianName} ({activeCase.medicalProfile?.guardianPhone})</Text>
+                   <Text style={[styles.detailLabel, {marginTop: 2}]}>2. RELATIVE: {activeCase.medicalProfile?.relativeName} ({activeCase.medicalProfile?.relativePhone})</Text>
+                   <Text style={[styles.detailLabel, {marginTop: 2}]}>3. NEXT OF KIN: {activeCase.medicalProfile?.kinName} ({activeCase.medicalProfile?.kinPhone})</Text>
                 </View>
 
                 {activeCase.status === 'Guided' && (
-                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#4CAF50', marginTop: 20 }]} onPress={markArrived}>
-                    <Text style={styles.actionBtnText}>VALIDATE & MARK ARRIVED</Text>
+                  <TouchableOpacity 
+                    style={[styles.actionBtn, { backgroundColor: distanceToVictim <= 50 ? '#2EAA6B' : '#8FA5BE', marginTop: 20 }]} 
+                    onPress={markArrived}
+                  >
+                    <Text style={styles.actionBtnText}>{distanceToVictim <= 50 ? 'MARK ARRIVED' : `APPROACHING (${distanceToVictim.toFixed(0)}m)`}</Text>
                   </TouchableOpacity>
                 )}
                 
                 {activeCase.status === 'Arrived' && (
-                  <View style={{ marginTop: 20, padding: 15, backgroundColor: '#E8F5E9', borderRadius: 8 }}>
-                    <Text style={{ textAlign: 'center', color: '#2E7D32', fontWeight: 'bold' }}>WAITING FOR VICTIM TO CLOSE CASE</Text>
-                    <Text style={{ textAlign: 'center', color: '#666', fontSize: 13, marginTop: 5 }}>The victim must physically acknowledge your arrival to formally end the record loop.</Text>
+                  <View style={{ marginTop: 20, padding: 15, backgroundColor: '#E8F8F0', borderRadius: 8 }}>
+                    <Text style={{ textAlign: 'center', color: '#2EAA6B', fontWeight: 'bold' }}>WAITING FOR VICTIM TO CLOSE CASE</Text>
+                    <Text style={{ textAlign: 'center', color: '#4A6080', fontSize: 13, marginTop: 5 }}>The victim must physically acknowledge your arrival to formally end the record loop.</Text>
                   </View>
                 )}
              </View>

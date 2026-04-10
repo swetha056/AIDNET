@@ -43,7 +43,11 @@ export const SeekerView = () => {
       medicalConditions: Array.isArray(p.medicalConditions) ? p.medicalConditions : (p.medicalConditions ? [p.medicalConditions] : []),
       allergies: Array.isArray(p.allergies) ? p.allergies : (p.allergies ? [p.allergies] : []),
       guardianName: p.guardianName || '',
-      guardianPhone: p.guardianPhone || ''
+      guardianPhone: p.guardianPhone || '',
+      relativeName: p.relativeName || '',
+      relativePhone: p.relativePhone || '',
+      kinName: p.kinName || '',
+      kinPhone: p.kinPhone || ''
     };
   });
   const [newAllergy, setNewAllergy] = useState('');
@@ -314,7 +318,7 @@ export const SeekerView = () => {
             <View style={styles.settingsHeader}>
               <Text style={styles.headerText}>{menuView.toUpperCase()}</Text>
               <TouchableOpacity onPress={() => { if(menuView === 'main') setShowMenu(false); else setMenuView('main'); }}>
-                <Ionicons name={menuView === 'main' ? "close" : "arrow-back"} size={26} color="#333" />
+                <Ionicons name={menuView === 'main' ? "close" : "arrow-back"} size={26} color="#0B1F3A" />
               </TouchableOpacity>
             </View>
 
@@ -328,7 +332,7 @@ export const SeekerView = () => {
                   <MenuOption label="App Settings" icon="settings-outline" onSelect={() => { setMenuView('profile'); setShowMenu(false); }} />
                   
                   <TouchableOpacity onPress={logout} style={styles.logoutBtnSettings}>
-                     <Text style={[styles.actionBtnText, { color: '#FF0000' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
+                     <Text style={[styles.actionBtnText, { color: '#C0202A' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -348,7 +352,7 @@ export const SeekerView = () => {
         <View style={styles.fullScreenOverlay}>
           <View style={styles.fullScreenHeader}>
              <TouchableOpacity onPress={() => setMenuView('main')}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#0B1F3A" />
              </TouchableOpacity>
              <Text style={styles.headerText}>{menuView.toUpperCase()}</Text>
              <View style={{ width: 28 }} />
@@ -425,8 +429,18 @@ export const SeekerView = () => {
                     </TouchableOpacity>
                   </View>
 
+                  <Text style={styles.sectionHeader}>PRIMARY GUARDIAN</Text>
                   <PersonalInput label="GUARDIAN NAME" value={profile.guardianName} onChange={t => setProfile({...profile, guardianName: t})} />
                   <PersonalInput label="GUARDIAN PHONE" value={profile.guardianPhone} onChange={t => setProfile({...profile, guardianPhone: t})} keyboard="phone-pad" />
+
+                  <Text style={[styles.sectionHeader, { marginTop: 25 }]}>EMERGENCY RELATIVE</Text>
+                  <PersonalInput label="RELATIVE NAME" value={profile.relativeName} onChange={t => setProfile({...profile, relativeName: t})} />
+                  <PersonalInput label="RELATIVE PHONE" value={profile.relativePhone} onChange={t => setProfile({...profile, relativePhone: t})} keyboard="phone-pad" />
+
+                  <Text style={[styles.sectionHeader, { marginTop: 25 }]}>NEXT OF KIN</Text>
+                  <PersonalInput label="KIN NAME" value={profile.kinName} onChange={t => setProfile({...profile, kinName: t})} />
+                  <PersonalInput label="KIN PHONE" value={profile.kinPhone} onChange={t => setProfile({...profile, kinPhone: t})} keyboard="phone-pad" />
+                  
                   <TouchableOpacity onPress={handleSaveProfile} style={styles.saveBtn}><Text style={styles.actionBtnText}>SAVE INFO</Text></TouchableOpacity>
                 </>
              )}
@@ -470,8 +484,8 @@ export const SeekerView = () => {
         {!mySos ? (
           <View style={styles.panicContainer}>
             {/* Stealth Mode Banner */}
-            {stealthMode && (
-              <View style={{ backgroundColor: '#1A1A1A', borderRadius: 10, padding: 10, marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
+            {isSilent && (
+              <View style={{ backgroundColor: '#0B1F3A', borderRadius: 10, padding: 10, marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons name="eye-off" size={16} color="#FFB347" />
                 <Text style={{ color: '#FFB347', fontSize: 12, fontWeight: 'bold', marginLeft: 8 }}>STEALTH MODE ACTIVE — Screen is dimmed & silent</Text>
               </View>
@@ -479,8 +493,8 @@ export const SeekerView = () => {
             <View style={styles.sosButtonWrapper}>
               <Animated.View style={[styles.progressRing, animatedCircleStyle]} />
               <TouchableOpacity activeOpacity={1} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-                <Animated.View style={[styles.panicButton, animatedButtonStyle, stealthMode && { backgroundColor: '#1A1A1A', borderColor: '#444' }]}>
-                  <Text style={[styles.panicText, isActivating && { color: '#FFF' }, stealthMode && { color: '#666' }]}>SOS</Text>
+                <Animated.View style={[styles.panicButton, animatedButtonStyle, isSilent && { backgroundColor: '#1A1A1A', borderColor: '#444' }]}>
+                  <Text style={[styles.panicText, isActivating && { color: '#FFF' }, isSilent && { color: '#666' }]}>SOS</Text>
                 </Animated.View>
               </TouchableOpacity>
             </View>

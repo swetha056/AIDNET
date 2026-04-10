@@ -18,12 +18,25 @@ export const InstitutionView = () => {
      contactPerson: 'Dr. Jane Smith (Chief Admin)',
      contactPhone: '1-800-EMERGENCY',
      rescueRadius: '50',
+     // Verification IDs
+     hfrId: user?.extraData?.licenseId || '',
+     nabhNumber: '',
+     clinicalReg: '',
+     nmcCollegeCode: '',
+     nablNumber: '',
+     pmjayId: '',
+     fireNocId: '',
+     pollutionNocId: '',
+     // Capabilities
      hasAmbulance: true,
      hasIcu: true,
      hasHelipad: false,
      hasBloodBank: true,
      isTraumaCenter: true,
      isBurnUnit: false,
+     ventilatorCount: '10',
+     icuBedsAvailable: '5',
+     bloodTypesInStock: ['A+', 'A-', 'B+', 'AB+']
   });
 
   const isRelevantDispatch = (facilityObj, type) => {
@@ -65,7 +78,7 @@ export const InstitutionView = () => {
 
   const ToggleSwitch = ({ label, value, onValueChange }) => (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
-      <Text style={{ fontSize: 15, color: '#333', fontWeight: '500', flex: 1 }}>{label}</Text>
+      <Text style={{ fontSize: 15, color: '#0B1F3A', fontWeight: '500', flex: 1 }}>{label}</Text>
       <Switch
         trackColor={{ false: "#767577", true: "#4CAF50" }}
         thumbColor={value ? "#FFF" : "#f4f3f4"}
@@ -92,7 +105,7 @@ export const InstitutionView = () => {
             <View style={styles.settingsHeader}>
               <Text style={styles.headerText}>FACILITY MENU</Text>
               <TouchableOpacity onPress={() => setShowMenu(false)}>
-                <Ionicons name="close" size={26} color="#333" />
+                <Ionicons name="close" size={26} color="#0B1F3A" />
               </TouchableOpacity>
             </View>
             <ScrollView contentContainerStyle={styles.settingsContent}>
@@ -100,7 +113,7 @@ export const InstitutionView = () => {
               <MenuOption label="Facility Profile" icon="business-outline" onSelect={() => {setMenuView('profile'); setShowMenu(false);}} />
               <MenuOption label="Active Roster" icon="people-outline" onSelect={() => {setMenuView('roster'); setShowMenu(false);}} />
               <TouchableOpacity onPress={logout} style={styles.logoutBtnSettings}>
-                 <Text style={[styles.actionBtnText, { color: '#FF0000' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
+                 <Text style={[styles.actionBtnText, { color: '#C0202A' }]}><Ionicons name="power" size={16} /> SIGN OUT</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -112,7 +125,7 @@ export const InstitutionView = () => {
         <View style={styles.fullScreenOverlay}>
           <View style={styles.fullScreenHeader}>
              <TouchableOpacity onPress={() => setMenuView('main')}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#0B1F3A" />
              </TouchableOpacity>
              <Text style={styles.headerText}>FACILITY CONFIG</Text>
              <View style={{ width: 28 }} />
@@ -125,20 +138,36 @@ export const InstitutionView = () => {
                <Text style={styles.inputLabel}>FACILITY NAME / BRANCH</Text>
                <TextInput style={styles.input} value={facility.facilityName} onChangeText={t => setFacility({...facility, facilityName: t})} />
              </View>
-             <View style={styles.inputGroup}>
-               <Text style={styles.inputLabel}>CHIEF ADMIN / DISPATCH COMMANDER</Text>
-               <TextInput style={styles.input} value={facility.contactPerson} onChangeText={t => setFacility({...facility, contactPerson: t})} />
-             </View>
-             <View style={styles.inputGroup}>
-               <Text style={styles.inputLabel}>EMERGENCY DIRECT LINE</Text>
-               <TextInput style={styles.input} value={facility.contactPhone} onChangeText={t => setFacility({...facility, contactPhone: t})} keyboardType="phone-pad" />
-             </View>
-             <View style={styles.inputGroup}>
-               <Text style={styles.inputLabel}>DEFAULT AMBULANCE COVERAGE RADIUS (KM)</Text>
-               <TextInput style={styles.input} value={facility.rescueRadius} onChangeText={t => setFacility({...facility, rescueRadius: t})} keyboardType="numeric" />
-             </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>AYUSHMAN BHARAT HFR ID</Text>
+                <TextInput style={styles.input} value={facility.hfrId} onChangeText={t => setFacility({...facility, hfrId: t})} placeholder="GHI-XXXXX" />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>NABH ACCREDITATION NO.</Text>
+                <TextInput style={styles.input} value={facility.nabhNumber} onChangeText={t => setFacility({...facility, nabhNumber: t})} />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>CLINICAL ESTABLISHMENT REG.</Text>
+                <TextInput style={styles.input} value={facility.clinicalReg} onChangeText={t => setFacility({...facility, clinicalReg: t})} />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>PMJAY EMPANELMENT ID</Text>
+                <TextInput style={styles.input} value={facility.pmjayId} onChangeText={t => setFacility({...facility, pmjayId: t})} />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>NABL LAB REGISTRATION</Text>
+                <TextInput style={styles.input} value={facility.nablNumber} onChangeText={t => setFacility({...facility, nablNumber: t})} />
+              </View>
 
-             <Text style={[styles.sectionHeader, { marginTop: 30 }]}>OPERATIONAL CAPABILITIES</Text>
+              <Text style={[styles.sectionHeader, { marginTop: 30 }]}>OPERATIONAL CAPABILITIES</Text>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>TOTAL VENTILATORS</Text>
+                <TextInput style={styles.input} value={facility.ventilatorCount} onChangeText={t => setFacility({...facility, ventilatorCount: t})} keyboardType="numeric" />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>AVAILABLE ICU BEDS</Text>
+                <TextInput style={styles.input} value={facility.icuBedsAvailable} onChangeText={t => setFacility({...facility, icuBedsAvailable: t})} keyboardType="numeric" />
+              </View>
              <View style={styles.card}>
                 <ToggleSwitch label="BLS / ALS Ambulances Active" value={facility.hasAmbulance} onValueChange={v => setFacility({...facility, hasAmbulance: v})} />
                 <View style={{ height: 1, backgroundColor: '#EEE' }}/>
@@ -164,7 +193,7 @@ export const InstitutionView = () => {
         <View style={styles.fullScreenOverlay}>
           <View style={styles.fullScreenHeader}>
              <TouchableOpacity onPress={() => setMenuView('main')}>
-                <Ionicons name="close" size={28} color="#333" />
+                <Ionicons name="close" size={28} color="#0B1F3A" />
              </TouchableOpacity>
              <Text style={styles.headerText}>ACTIVE PERSONNEL</Text>
              <View style={{ width: 28 }} />
@@ -175,10 +204,10 @@ export const InstitutionView = () => {
              
              <View style={styles.card}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="person-circle" size={40} color="#4CAF50" />
+                  <Ionicons name="person-circle" size={40} color="#C9A84C" />
                   <View style={{ marginLeft: 15 }}>
                      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Dr. Swetha</Text>
-                     <Text style={{ color: '#666', fontSize: 12 }}>Tactical EMS • ID: VK-4982</Text>
+                     <Text style={{ color: '#4A6080', fontSize: 12 }}>Tactical EMS • ID: VK-4982</Text>
                   </View>
                 </View>
                 <View style={[styles.statusBadgeExpert, { marginTop: 10, alignSelf: 'flex-start', backgroundColor: '#4CAF5022' }]}>
@@ -188,10 +217,10 @@ export const InstitutionView = () => {
 
              <View style={styles.card}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="person-circle" size={40} color="#FFCC33" />
+                  <Ionicons name="person-circle" size={40} color="#C9A84C" />
                   <View style={{ marginLeft: 15 }}>
                      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Ambulance Unit 4</Text>
-                     <Text style={{ color: '#666', fontSize: 12 }}>ALS Crew • EMT Assigned</Text>
+                     <Text style={{ color: '#4A6080', fontSize: 12 }}>ALS Crew • EMT Assigned</Text>
                   </View>
                 </View>
                 <View style={[styles.statusBadgeExpert, { marginTop: 10, alignSelf: 'flex-start', backgroundColor: '#FFCC3322' }]}>
@@ -201,10 +230,10 @@ export const InstitutionView = () => {
 
              <View style={styles.card}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="person-circle" size={40} color="#FF3B30" />
+                  <Ionicons name="person-circle" size={40} color="#C9A84C" />
                   <View style={{ marginLeft: 15 }}>
                      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Dr. A. Sharma</Text>
-                     <Text style={{ color: '#666', fontSize: 12 }}>ER Physician • ID: NMC-8374</Text>
+                     <Text style={{ color: '#4A6080', fontSize: 12 }}>ER Physician • ID: NMC-8374</Text>
                   </View>
                 </View>
                 <View style={[styles.statusBadgeExpert, { marginTop: 10, alignSelf: 'flex-start', backgroundColor: '#FF3B3022' }]}>

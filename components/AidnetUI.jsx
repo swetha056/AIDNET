@@ -38,7 +38,7 @@ export const PersonalInput = ({ label, value, onChange, keyboard = 'default', pl
       onChangeText={onChange} 
       keyboardType={keyboard} 
       placeholder={placeholder}
-      placeholderTextColor="#DDD"
+      placeholderTextColor="#1A3A6B"
       autoCapitalize="words"
       autoCorrect={false}
     />
@@ -47,14 +47,14 @@ export const PersonalInput = ({ label, value, onChange, keyboard = 'default', pl
 
 export const MenuOption = ({ label, icon, onSelect }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onSelect}>
-    <Ionicons name={icon} size={20} color="#0B1F3A" />
+    <Ionicons name={icon} size={20} color="#C9A84C" />
     <Text style={styles.menuItemText}>{label}</Text>
   </TouchableOpacity>
 );
 
 export const CheckpointLink = ({ label, completed, onPress }) => (
   <TouchableOpacity style={styles.checkpointItem} onPress={onPress}>
-    <Ionicons name={completed ? "checkbox" : "square-outline"} size={22} color={completed ? "#2EAA6B" : "#AAA"} />
-    <Text style={[styles.checkpointText, completed && { color: '#AAA', textDecorationLine: 'line-through' }]}>{label}</Text>
+    <Ionicons name={completed ? "checkbox" : "square-outline"} size={22} color={completed ? "#2EAA6B" : "#C9A84C"} />
+    <Text style={[styles.checkpointText, completed && { color: '#8FA5BE', textDecorationLine: 'line-through' }]}>{label}</Text>
   </TouchableOpacity>
 );
