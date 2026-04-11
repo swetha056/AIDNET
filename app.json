@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "aidnet",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aidnet.emergency"
@@ -18,7 +18,11 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "FOREGROUND_SERVICE",
-        "NOTIFICATIONS"
+        "NOTIFICATIONS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
@@ -48,12 +52,13 @@
       "expo-notifications",
       "expo-av"
     ],
-    "experiments": {
-    },
+    "experiments": {},
     "extra": {
-      "router": {},
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "28744f6c-5439-4804-8e51-57e4b58f509f"
+        "projectId": "66fea110-6301-49bf-9965-ba3649a0456a"
       }
     }
   }
